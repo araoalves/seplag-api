@@ -14,9 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 @Service
 @RequiredArgsConstructor
@@ -53,7 +53,17 @@ public class ServidorEfetivoService {
         fotoPessoa.setFpHash(minioService.uploadFoto(pessoa.getPesId(), form.getFoto()));
         fotoPessoaRepository.save(fotoPessoa);
 
-        return mapper.toDTO(servidor);
+        ServidorEfetivoDTO dto = mapper.toDTO(servidor);
+
+        fotoPessoaRepository.findTopByPessoaOrderByFpDataDesc(pessoa)
+                .ifPresent(f -> dto.setUrlFoto(minioService.getUrlTemporaria(fotoPessoa.getFpHash())));
+
+        if (pessoa.getPesDataNascimento() != null) {
+            int idade = Period.between(pessoa.getPesDataNascimento(), LocalDate.now()).getYears();
+            dto.setIdade(idade);
+        }
+
+        return dto;
     }
 
 }
