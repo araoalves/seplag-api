@@ -1,0 +1,12 @@
+info:
+  app:
+    description: '@project.description@'
+    encoding: '@project.build.sourceEncoding@'
+  build:
+    artifact: '@project.artifactId@'
+    group: '@project.groupId@'
+    name: '@project.name@'
+    description: '@project.description@'
+    version: '@project.version@'
+server:
+  port: 8080
