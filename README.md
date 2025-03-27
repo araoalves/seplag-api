@@ -58,18 +58,15 @@ Você pode usar sua IDE ou:
 Cria um novo servidor efetivo com envio de imagem.
 
 **Body (form-data):**
-| Campo   | Tipo        | Descrição                  |
-|---------|-------------|-----------------------------|
-| dados   | Text (JSON) | JSON com os dados do DTO    |
-| foto    | File        | Arquivo de imagem (opcional)|
-
-**Exemplo de campo `dados`:**
-```json
-{
-  "nome": "João Silva",
-  "matricula": "123456"
-}
-```
+| Campo              | Tipo  | Descrição                                      |
+|--------------------|--------|-------------------------------------------------|
+| nome               | Text  | Nome completo                                   |
+| matricula          | Text  | Matrícula do servidor                           |
+| pesDataNascimento  | Text  | Data de nascimento (formato yyyy-MM-dd)         |
+| pesSexo            | Text  | Sexo (M/F)                                      |
+| pesMae             | Text  | Nome da mãe                                     |
+| pesPai             | Text  | Nome do pai                                     |
+| foto               | File  | Arquivo de imagem (opcional)                    |
 
 ---
 
@@ -84,6 +81,23 @@ Lista os servidores efetivos com paginação e filtros dinâmicos.
 ```
 GET /servidores-efetivos/listar?seMatricula=123&page=0&size=10
 ```
+
+Cada item retornado inclui:
+- Nome
+- Matrícula
+- Idade (calculada a partir da data de nascimento)
+- URL temporária da foto (expira em 5 minutos)
+
+---
+
+## ☁️ MinIO - Armazenamento de Fotos
+
+Fotos são armazenadas no MinIO e acessadas por meio de links temporários (válidos por 5 minutos).
+
+- O bucket padrão é `fotos`
+- Os arquivos são enviados via `MinioService`
+- O hash do arquivo é salvo na tabela `foto_pessoa`
+- A URL é gerada automaticamente no DTO usando o último registro da pessoa
 
 ---
 
@@ -103,11 +117,9 @@ src/main/java
 
 ---
 
-## ☁️ MinIO - Armazenamento de Fotos
+## 🔒 Segurança
 
-Fotos são armazenadas no MinIO e acessadas por meio de links temporários (válidos por 5 minutos).
-- Bucket padrão: `fotos`
-- Upload via `MinioService`
+Autenticação via JWT será implementada com expiração a cada 5 minutos e suporte à renovação de token.
 
 ---
 
