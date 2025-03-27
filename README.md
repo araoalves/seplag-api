@@ -66,7 +66,35 @@ Cria um novo servidor efetivo com envio de imagem.
 | pesSexo            | Text  | Sexo (M/F)                                      |
 | pesMae             | Text  | Nome da mãe                                     |
 | pesPai             | Text  | Nome do pai                                     |
+| cidade             | Text  | Cidade de endereço funcional                    |
+| uf                 | Text  | UF da cidade                                    |
+| tipoLogradouro     | Text  | Tipo do logradouro (ex: Rua, Avenida)           |
+| logradouro         | Text  | Nome da rua                                     |
+| numero             | Text  | Número do endereço                              |
+| bairro             | Text  | Bairro do endereço                              |
+| unidadeId          | Text  | ID da unidade de lotação                        |
 | foto               | File  | Arquivo de imagem (opcional)                    |
+
+**Exemplo no Postman:**
+
+Preencha os campos na aba **Body > form-data**:
+
+```
+nome: João Silva
+matricula: 123456
+pesDataNascimento: 1990-05-12
+pesSexo: M
+pesMae: Maria da Silva
+pesPai: José da Silva
+cidade: Cuiabá
+uf: MT
+tipoLogradouro: Rua
+logradouro: das Flores
+numero: 100
+bairro: Centro
+unidadeId: 1
+foto: (selecione uma imagem do seu computador)
+```
 
 ---
 
@@ -108,6 +136,7 @@ src/main/java
 └── br/gov/mt/seplag/api
     ├── controller
     ├── dto
+    ├── form
     ├── mapper
     ├── model
     ├── repository

@@ -14,4 +14,13 @@ public class ServidorEfetivoForm {
     private String pesSexo;
     private String pesMae;
     private String pesPai;
+    private String cidade;
+    private String uf;
+    private String tipoLogradouro;
+    private String logradouro;
+    private int numero;
+    private String bairro;
+
+    private Long unidadeId;
+
 }
