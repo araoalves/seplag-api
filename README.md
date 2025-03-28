@@ -64,7 +64,6 @@ http://localhost:8080/swagger-ui/index.html
 ### 🔹 `POST /servidores-efetivos`
 Cria um novo servidor efetivo com imagem em Base64.
 
-**Exemplo de JSON:**
 ```json
 {
   "nome": "João Silva",
@@ -84,19 +83,17 @@ Cria um novo servidor efetivo com imagem em Base64.
 }
 ```
 
----
-
 ### 🔹 `PUT /servidores-efetivos/{id}`
-Atualiza os dados de um servidor efetivo existente (aceita nova foto Base64).
+Atualiza os dados de um servidor efetivo (também aceita nova imagem Base64).
 
 ### 🔹 `GET /servidores-efetivos/listar`
-Lista os servidores efetivos com paginação e filtros dinâmicos.
+Lista os servidores efetivos com paginação e filtros.
 
 ### 🔹 `GET /servidores-efetivos/unidade/{unidId}`
-Consulta todos os servidores efetivos lotados em uma unidade específica.
+Consulta servidores efetivos por unidade.
 
 ### 🔹 `GET /servidores-efetivos/endereco-funcional?nome={parteDoNome}`
-Consulta o endereço funcional da unidade onde o servidor está lotado.
+Consulta endereço funcional da unidade por nome do servidor.
 
 ### 🔹 `DELETE /servidores-efetivos/{id}`
 Remove um servidor efetivo por ID.
@@ -106,7 +103,6 @@ Remove um servidor efetivo por ID.
 ### 🔹 `POST /servidores-temporarios`
 Cria um novo servidor temporário com imagem em Base64.
 
-**Exemplo de JSON:**
 ```json
 {
   "nome": "Carlos da Silva",
@@ -132,15 +128,61 @@ Cria um novo servidor temporário com imagem em Base64.
 Atualiza um servidor temporário.
 
 ### 🔹 `GET /servidores-temporarios/listar`
-Lista os servidores temporários com paginação e filtros.
+Lista servidores temporários com paginação e filtros.
 
 ### 🔹 `GET /servidores-temporarios/{id}`
-Busca um servidor temporário por ID.
+Consulta servidor temporário por ID.
 
 ### 🔹 `DELETE /servidores-temporarios/{id}`
 Remove um servidor temporário por ID.
 
-> Todos os endpoints podem ser testados diretamente na interface Swagger.
+---
+
+### 🔹 `POST /unidades`
+Cria uma nova unidade:
+```json
+{ "unidNome": "Secretaria de Administração" }
+```
+
+### 🔹 `GET /unidades/listar`
+Lista unidades com paginação e filtros.
+
+### 🔹 `GET /unidades/{id}`
+Consulta unidade por ID.
+
+### 🔹 `PUT /unidades/{id}`
+Atualiza dados da unidade.
+
+### 🔹 `DELETE /unidades/{id}`
+Remove uma unidade por ID.
+
+---
+
+### 🔹 `POST /lotacoes`
+Cria uma nova lotação:
+```json
+{
+  "pessoaId": 4,
+  "unidadeId": 2,
+  "lotDataLotacao": "2024-10-01",
+  "lotDataRemocao": null,
+  "lotPortaria": "PORTARIA Nº 1234"
+}
+```
+
+### 🔹 `GET /lotacoes/listar`
+Lista todas as lotações com paginação e filtros.
+
+### 🔹 `GET /lotacoes/{id}`
+Consulta uma lotação pelo ID.
+
+### 🔹 `PUT /lotacoes/{id}`
+Atualiza dados de uma lotação.
+
+### 🔹 `DELETE /lotacoes/{id}`
+Remove uma lotação por ID.
+
+> Todos os endpoints podem ser testados diretamente via Swagger UI.
 
 ---
 
@@ -187,8 +229,6 @@ http://localhost:8080/swagger-ui/index.html
 ```
 
 Você pode testar todos os endpoints diretamente pela interface web.
-
-> Caso precise customizar título/descrição, edite a configuração da OpenAPI no arquivo `OpenAPIConfig` (caso tenha).
 
 ---
 
