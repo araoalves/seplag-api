@@ -1,15 +1,14 @@
-package br.gov.mt.seplag.api.form;
+package br.gov.mt.seplag.api.dto;
 
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
 @Data
-public class ServidorEfetivoForm {
+public class ServidorEfetivoRequestDTO {
     private String nome;
     private String matricula;
-    private MultipartFile foto;
+    private String  fotoBase64;
     private LocalDate pesDataNascimento;
     private String pesSexo;
     private String pesMae;

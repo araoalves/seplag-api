@@ -2,7 +2,7 @@ package br.gov.mt.seplag.api.controller;
 
 import br.gov.mt.seplag.api.dto.EnderecoFuncionalDTO;
 import br.gov.mt.seplag.api.dto.ServidorEfetivoDTO;
-import br.gov.mt.seplag.api.form.ServidorEfetivoForm;
+import br.gov.mt.seplag.api.dto.ServidorEfetivoRequestDTO;
 import br.gov.mt.seplag.api.services.ServidorEfetivoService;
 import br.gov.mt.seplag.api.specification.SpecTemplate;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,9 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @Tag(description = "Controller de Servidor Efetivo", name = "Servidor Efetivo")
@@ -38,7 +35,7 @@ public class ServidorEfetivoController {
     @Operation(summary = "Salvar", description = "Endpoint para salvar os dados de um servidor efetivo.",
             security = {@SecurityRequirement(name = "bearer-key")})
     @PostMapping
-    public ResponseEntity<ServidorEfetivoDTO> salvar(@ModelAttribute ServidorEfetivoForm form) {
+    public ResponseEntity<ServidorEfetivoDTO> salvar(@RequestBody ServidorEfetivoRequestDTO form) {
         return ResponseEntity.ok(service.salvar(form));
     }
 
@@ -66,7 +63,7 @@ public class ServidorEfetivoController {
     @PutMapping("/{id}")
     public ResponseEntity<ServidorEfetivoDTO> atualizarServidorEfetivo(
             @PathVariable Long id,
-            @ModelAttribute ServidorEfetivoForm form
+            @RequestBody ServidorEfetivoRequestDTO form
     ) {
         return service.atualizar(id, form)
                 .map(ResponseEntity::ok)

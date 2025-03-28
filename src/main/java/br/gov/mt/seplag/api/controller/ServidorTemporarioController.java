@@ -1,7 +1,7 @@
 package br.gov.mt.seplag.api.controller;
 
 import br.gov.mt.seplag.api.dto.ServidorTemporarioDTO;
-import br.gov.mt.seplag.api.form.ServidorTemporarioForm;
+import br.gov.mt.seplag.api.dto.ServidorTemporarioRequestDTO;
 import br.gov.mt.seplag.api.services.ServidorTemporarioService;
 import br.gov.mt.seplag.api.specification.SpecTemplate;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +25,7 @@ public class ServidorTemporarioController {
     @Operation(summary = "Salvar", description = "Endpoint para salvar os dados de um servidor temporário.",
             security = {@SecurityRequirement(name = "bearer-key")})
     @PostMapping
-    public ResponseEntity<ServidorTemporarioDTO> salvar(@ModelAttribute ServidorTemporarioForm form) {
+    public ResponseEntity<ServidorTemporarioDTO> salvar(@RequestBody ServidorTemporarioRequestDTO form) {
         return new ResponseEntity<>(service.salvar(form), HttpStatus.CREATED);
     }
 
@@ -33,7 +33,7 @@ public class ServidorTemporarioController {
             security = {@SecurityRequirement(name = "bearer-key")})
     @PutMapping("/{id}")
     public ResponseEntity<ServidorTemporarioDTO> atualizar(@PathVariable Long id,
-                                                           @ModelAttribute ServidorTemporarioForm form) {
+                                                           @RequestBody ServidorTemporarioRequestDTO form) {
         return service.atualizar(id, form)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

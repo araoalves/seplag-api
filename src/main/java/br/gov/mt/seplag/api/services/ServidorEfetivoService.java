@@ -2,7 +2,7 @@ package br.gov.mt.seplag.api.services;
 
 import br.gov.mt.seplag.api.dto.EnderecoFuncionalDTO;
 import br.gov.mt.seplag.api.dto.ServidorEfetivoDTO;
-import br.gov.mt.seplag.api.form.ServidorEfetivoForm;
+import br.gov.mt.seplag.api.dto.ServidorEfetivoRequestDTO;
 import br.gov.mt.seplag.api.mappers.ServidorEfetivoMapper;
 import br.gov.mt.seplag.api.model.*;
 import br.gov.mt.seplag.api.repository.*;
@@ -14,11 +14,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +40,7 @@ public class ServidorEfetivoService {
         });
     }
 
-    public ServidorEfetivoDTO salvar(ServidorEfetivoForm form) {
+    public ServidorEfetivoDTO salvar(ServidorEfetivoRequestDTO form) {
         Pessoa pessoa = new Pessoa();
         pessoa.setPesNome(form.getNome());
         pessoa.setPesDataNascimento(form.getPesDataNascimento());
@@ -92,7 +89,7 @@ public class ServidorEfetivoService {
         fotoPessoa.setPessoa(pessoa);
         fotoPessoa.setFpData(LocalDate.now());
         fotoPessoa.setFpBucket("fotos");
-        fotoPessoa.setFpHash(minioService.uploadFoto(pessoa.getPesId(), form.getFoto()));
+        fotoPessoa.setFpHash(minioService.uploadFotoBase64(pessoa.getPesId(), form.getFotoBase64()));
         fotoPessoaRepository.save(fotoPessoa);
 
         ServidorEfetivoDTO dto = mapper.toDTO(servidor);
@@ -153,7 +150,7 @@ public class ServidorEfetivoService {
         });
     }
 
-    public Optional<ServidorEfetivoDTO> atualizar(Long id, ServidorEfetivoForm form) {
+    public Optional<ServidorEfetivoDTO> atualizar(Long id, ServidorEfetivoRequestDTO form) {
         return repository.findById(id).map(servidor -> {
             Pessoa pessoa = servidor.getPessoa();
             pessoa.setPesNome(form.getNome());
@@ -167,12 +164,12 @@ public class ServidorEfetivoService {
             servidor = repository.save(servidor);
 
             // Foto nova (opcional)
-            if (form.getFoto() != null && !form.getFoto().isEmpty()) {
+            if (form.getFotoBase64() != null && !form.getFotoBase64().isEmpty()) {
                 FotoPessoa fotoPessoa = new FotoPessoa();
                 fotoPessoa.setPessoa(pessoa);
                 fotoPessoa.setFpData(LocalDate.now());
                 fotoPessoa.setFpBucket("fotos");
-                fotoPessoa.setFpHash(minioService.uploadFoto(pessoa.getPesId(), form.getFoto()));
+                fotoPessoa.setFpHash(minioService.uploadFotoBase64(pessoa.getPesId(), form.getFotoBase64()));
                 fotoPessoaRepository.save(fotoPessoa);
             }
 

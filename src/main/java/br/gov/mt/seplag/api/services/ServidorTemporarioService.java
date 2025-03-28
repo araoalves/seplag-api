@@ -1,8 +1,7 @@
 package br.gov.mt.seplag.api.services;
 
-import br.gov.mt.seplag.api.dto.ServidorEfetivoDTO;
 import br.gov.mt.seplag.api.dto.ServidorTemporarioDTO;
-import br.gov.mt.seplag.api.form.ServidorTemporarioForm;
+import br.gov.mt.seplag.api.dto.ServidorTemporarioRequestDTO;
 import br.gov.mt.seplag.api.mappers.ServidorTemporarioMapper;
 import br.gov.mt.seplag.api.model.*;
 import br.gov.mt.seplag.api.repository.*;
@@ -30,7 +29,7 @@ public class ServidorTemporarioService {
     private final MinioService minioService;
     private final ServidorTemporarioMapper mapper;
 
-    public ServidorTemporarioDTO salvar(ServidorTemporarioForm form) {
+    public ServidorTemporarioDTO salvar(ServidorTemporarioRequestDTO form) {
         Pessoa pessoa = new Pessoa();
         pessoa.setPesNome(form.getNome());
         pessoa.setPesDataNascimento(form.getPesDataNascimento());
@@ -77,7 +76,7 @@ public class ServidorTemporarioService {
         foto.setPessoa(pessoa);
         foto.setFpData(LocalDate.now());
         foto.setFpBucket("fotos");
-        foto.setFpHash(minioService.uploadFoto(pessoa.getPesId(), form.getFoto()));
+        foto.setFpHash(minioService.uploadFotoBase64(pessoa.getPesId(), form.getFotoBase64()));
         fotoPessoaRepository.save(foto);
 
         ServidorTemporarioDTO dto = mapper.toDTO(servidor);
@@ -90,7 +89,7 @@ public class ServidorTemporarioService {
         return dto;
     }
 
-    public Optional<ServidorTemporarioDTO> atualizar(Long id, ServidorTemporarioForm form) {
+    public Optional<ServidorTemporarioDTO> atualizar(Long id, ServidorTemporarioRequestDTO form) {
         return repository.findById(id).map(servidor -> {
             Pessoa pessoa = servidor.getPessoa();
             pessoa.setPesNome(form.getNome());
@@ -104,12 +103,12 @@ public class ServidorTemporarioService {
             servidor.setStDataDemissao(form.getDataDemissao());
             servidor = repository.save(servidor);
 
-            if (form.getFoto() != null && !form.getFoto().isEmpty()) {
+            if (form.getFotoBase64() != null && !form.getFotoBase64().isEmpty()) {
                 FotoPessoa foto = new FotoPessoa();
                 foto.setPessoa(pessoa);
                 foto.setFpData(LocalDate.now());
                 foto.setFpBucket("fotos");
-                foto.setFpHash(minioService.uploadFoto(pessoa.getPesId(), form.getFoto()));
+                foto.setFpHash(minioService.uploadFotoBase64(pessoa.getPesId(), form.getFotoBase64()));
                 fotoPessoaRepository.save(foto);
             }
 

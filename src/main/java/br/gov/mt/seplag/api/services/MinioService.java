@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Base64;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -23,36 +25,29 @@ public class MinioService {
 
     /**
      * Envia uma foto para o bucket configurado no MinIO
-     * @param pessoaId usado para identificar o dono da imagem (opcional para salvar com o nome)
-     * @param file arquivo de imagem enviado via multipart
+     * @param pessoaId id da pessoa
+     * @param foto arquivo de imagem enviado via base 64
      * @return hash (nome do objeto no bucket)
      */
-    public String uploadFoto(Long pessoaId, MultipartFile file) {
+    public String uploadFotoBase64(Long pessoaId, String foto) {
         try {
-            String hash = UUID.randomUUID().toString();
+            byte[] decodedBytes = Base64.getDecoder().decode(foto.split(",")[1]); // remove prefixo data:image/png;base64,
+            String nomeArquivo = "foto_" + pessoaId + "_" + UUID.randomUUID();
+            InputStream input = new ByteArrayInputStream(decodedBytes);
 
-            // Cria bucket se não existir
-            boolean exists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
-            if (!exists) {
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
-            }
+            minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(nomeArquivo)
+                    .stream(input, decodedBytes.length, -1)
+                    .contentType("image/png")
+                    .build());
 
-            try (InputStream is = file.getInputStream()) {
-                minioClient.putObject(
-                        PutObjectArgs.builder()
-                                .bucket(bucket)
-                                .object(hash)
-                                .stream(is, file.getSize(), -1)
-                                .contentType(file.getContentType())
-                                .build()
-                );
-            }
-
-            return hash;
+            return nomeArquivo;
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao fazer upload da imagem para o MinIO", e);
+            throw new RuntimeException("Erro ao enviar imagem para MinIO", e);
         }
     }
+
 
     /**
      * Gera uma URL temporária (expira em 5 minutos)
