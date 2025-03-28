@@ -78,6 +78,13 @@ CREATE TABLE lotacao (
                          lot_portaria VARCHAR(100)
 );
 
+CREATE TABLE usuario (
+                         id SERIAL PRIMARY KEY,
+                         login VARCHAR(100) NOT NULL UNIQUE,
+                         senha VARCHAR(255) NOT NULL,
+                         role VARCHAR(50) NOT NULL
+);
+
 INSERT INTO unidade (unid_nome, unid_sigla) VALUES ('UNIDADE SEPLAG','US');
 INSERT INTO unidade (unid_nome, unid_sigla) VALUES ('UNIDADE TESTE','UT');
 

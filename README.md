@@ -1,12 +1,13 @@
 # 📘 API - Gestão de Servidores
 
-API RESTful desenvolvida em Java Spring Boot com PostgreSQL, MinIO e Specification para gerenciamento de Servidores Efetivos, Temporários, Unidades e Lotações.
+API RESTful desenvolvida em Java Spring Boot com PostgreSQL, MinIO, JWT e Specification para gerenciamento de Servidores Efetivos, Temporários, Unidades e Lotações.
 
 ## 🚀 Tecnologias utilizadas
 
 - Java 17
-- Spring Boot
+- Spring Boot 3.0.7
 - Spring Data JPA
+- Spring Security 6 (com JWT)
 - PostgreSQL
 - MinIO (Armazenamento de fotos)
 - Docker + Docker Compose
@@ -55,6 +56,41 @@ Você pode usar sua IDE ou:
 Acesse:
 ```
 http://localhost:8080/swagger-ui/index.html
+```
+
+---
+
+## 🔐 Autenticação com JWT
+
+- A autenticação é feita via JWT (token expira em 5 minutos)
+- Para gerar o token, use o endpoint:
+
+### 🔹 `POST /auth/login`
+
+```json
+{
+  "login": "admin",
+  "senha": "admin"
+}
+```
+
+> Um usuário padrão `admin` com senha `admin` é criado automaticamente ao iniciar a aplicação, caso não exista.
+
+### 🔹 `POST /usuarios`
+Cadastra um novo usuário com senha criptografada:
+
+```json
+{
+  "login": "joao",
+  "senha": "senha123",
+  "role": "USER"
+}
+```
+
+Use o token retornado no login para autenticar nas demais rotas:
+
+```
+Authorization: Bearer <seu_token_aqui>
 ```
 
 ---
@@ -209,15 +245,10 @@ src/main/java
     ├── mapper
     ├── model
     ├── repository
+    ├── security
     ├── services
     └── specification
 ```
-
----
-
-## 🔒 Segurança
-
-Autenticação via JWT será implementada com expiração a cada 5 minutos e suporte à renovação de token.
 
 ---
 
