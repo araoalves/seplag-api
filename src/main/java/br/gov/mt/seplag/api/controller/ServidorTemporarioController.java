@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@Tag(description = "Controller de Servidor Temporário", name = "Servidor Temporário")
+@Tag(description = "Controller para o CRUD de Servidor Temporário", name = "Servidor Temporário")
 @RequestMapping("/servidores-temporarios")
 public class ServidorTemporarioController {
 

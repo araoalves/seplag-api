@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@Tag(description = "Controller de Servidor Efetivo", name = "Servidor Efetivo")
+@Tag(description = "Controller para o CRUD de Servidor Efetivo", name = "Servidor Efetivo")
 @RequestMapping("/servidores-efetivos")
 @RequiredArgsConstructor
 public class ServidorEfetivoController {
