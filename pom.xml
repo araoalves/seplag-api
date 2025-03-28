@@ -12,7 +12,7 @@
 	<artifactId>seplag-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Seplag - API</name>
-	<description>API para ao teste do processo seletivo SEPLAG</description>
+	<description>API para o teste do processo seletivo SEPLAG</description>
 	<properties>
 		<java.version>17</java.version>
 		<springdoc-openapi.version>2.0.0</springdoc-openapi.version>
@@ -82,6 +82,12 @@
 			<groupId>net.kaczmarzyk</groupId>
 			<artifactId>specification-arg-resolver</artifactId>
 			<version>3.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc-openapi.version}</version>
 		</dependency>
 
 
