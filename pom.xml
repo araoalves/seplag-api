@@ -117,6 +117,26 @@
 
 	</dependencies>
 
+	<profiles>
+
+		<profile>
+			<id>dev</id>
+			<properties>
+				<spring.profiles.active>dev</spring.profiles.active>
+				<log.level>debug</log.level>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>hmlg</id>
+			<properties>
+				<spring.profiles.active>hmlg</spring.profiles.active>
+				<log.level>error</log.level>
+			</properties>
+		</profile>
+
+	</profiles>
+
 	<build>
 		<resources>
 			<resource>
