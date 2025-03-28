@@ -12,6 +12,7 @@ API RESTful desenvolvida em Java Spring Boot com PostgreSQL, MinIO e Specificati
 - Docker + Docker Compose
 - MapStruct (conversão entre DTO e Model)
 - specification-arg-resolver (`net.kaczmarzyk`) para filtros dinâmicos e paginação
+- Swagger OpenAPI 3 (documentação interativa)
 
 ---
 
@@ -50,115 +51,96 @@ Você pode usar sua IDE ou:
 ./mvnw spring-boot:run
 ```
 
+### 5. Acessar a documentação da API (Swagger UI)
+Acesse:
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
 ---
 
 ## 📦 Endpoints disponíveis
 
 ### 🔹 `POST /servidores-efetivos`
-Cria um novo servidor efetivo com envio de imagem.
+Cria um novo servidor efetivo com imagem em Base64.
 
-**Body (form-data):**
-| Campo              | Tipo  | Descrição                                      |
-|--------------------|--------|-------------------------------------------------|
-| nome               | Text  | Nome completo                                   |
-| matricula          | Text  | Matrícula do servidor                           |
-| pesDataNascimento  | Text  | Data de nascimento (formato yyyy-MM-dd)         |
-| pesSexo            | Text  | Sexo (M/F)                                      |
-| pesMae             | Text  | Nome da mãe                                     |
-| pesPai             | Text  | Nome do pai                                     |
-| cidade             | Text  | Cidade de endereço funcional                    |
-| uf                 | Text  | UF da cidade                                    |
-| tipoLogradouro     | Text  | Tipo do logradouro (ex: Rua, Avenida)           |
-| logradouro         | Text  | Nome da rua                                     |
-| numero             | Text  | Número do endereço                              |
-| bairro             | Text  | Bairro do endereço                              |
-| unidadeId          | Text  | ID da unidade de lotação                        |
-| foto               | File  | Arquivo de imagem (opcional)                    |
-
-**Exemplo no Postman:**
-
-```
-nome: João Silva
-matricula: 123456
-pesDataNascimento: 1990-05-12
-pesSexo: M
-pesMae: Maria da Silva
-pesPai: José da Silva
-cidade: Cuiabá
-uf: MT
-tipoLogradouro: Rua
-logradouro: das Flores
-numero: 100
-bairro: Centro
-unidadeId: 1
-foto: (selecione uma imagem do seu computador)
-```
-
----
-
-### 🔹 `GET /servidores-efetivos/listar`
-Lista os servidores efetivos com paginação e filtros dinâmicos.
-
-**Parâmetros disponíveis:**
-- `seMatricula` (LIKE)
-- `pessoa.pesNome` (LIKE)
-
-**Exemplo de chamada:**
-```
-GET /servidores-efetivos/listar?pessoa.pesNome=joao&seMatricula=123&page=0&size=10
-```
-
-Retorno:
-- Nome
-- Matrícula
-- Idade
-- Unidade de lotação
-- URL da foto
-
----
-
-### 🔹 `GET /servidores-efetivos/unidade/{unidId}`
-Consulta todos os servidores efetivos lotados em uma unidade específica.
-
-**Exemplo:**
-```
-GET /servidores-efetivos/unidade/2?page=0&size=10
-```
-
-Retorna os campos:
-- Nome
-- Idade
-- Unidade de lotação
-- Fotografia (URL temporária do MinIO)
-
----
-
-### 🔹 `GET /servidores-efetivos/endereco-funcional?nome={parteDoNome}`
-Consulta o endereço funcional (endereço da unidade onde o servidor está lotado) com base em parte do nome do servidor efetivo (aceita com ou sem acento).
-
-**Exemplo:**
-```
-GET /servidores-efetivos/endereco-funcional?nome=arão
-```
-
-Retorno:
+**Exemplo de JSON:**
 ```json
 {
-  "nomeServidor": "Arão Alves de Farias",
-  "unidade": "UNIDADE TESTE",
+  "nome": "João Silva",
+  "matricula": "123456",
+  "pesDataNascimento": "1990-05-12",
+  "pesSexo": "M",
+  "pesMae": "Maria da Silva",
+  "pesPai": "José da Silva",
+  "cidade": "Cuiabá",
+  "uf": "MT",
   "tipoLogradouro": "Rua",
   "logradouro": "das Flores",
   "numero": 100,
   "bairro": "Centro",
-  "cidade": "Cuiabá",
-  "uf": "MT"
+  "unidadeId": 1,
+  "fotoBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABVYAAAJ..."
 }
 ```
 
-> 🔎 Esse endpoint utiliza a função `unaccent` do PostgreSQL, portanto é necessário ativá-la com:
-```sql
-CREATE EXTENSION IF NOT EXISTS unaccent;
+---
+
+### 🔹 `PUT /servidores-efetivos/{id}`
+Atualiza os dados de um servidor efetivo existente (aceita nova foto Base64).
+
+### 🔹 `GET /servidores-efetivos/listar`
+Lista os servidores efetivos com paginação e filtros dinâmicos.
+
+### 🔹 `GET /servidores-efetivos/unidade/{unidId}`
+Consulta todos os servidores efetivos lotados em uma unidade específica.
+
+### 🔹 `GET /servidores-efetivos/endereco-funcional?nome={parteDoNome}`
+Consulta o endereço funcional da unidade onde o servidor está lotado.
+
+### 🔹 `DELETE /servidores-efetivos/{id}`
+Remove um servidor efetivo por ID.
+
+---
+
+### 🔹 `POST /servidores-temporarios`
+Cria um novo servidor temporário com imagem em Base64.
+
+**Exemplo de JSON:**
+```json
+{
+  "nome": "Carlos da Silva",
+  "matricula": "TEMP12345",
+  "pesDataNascimento": "1985-02-14",
+  "pesSexo": "M",
+  "pesMae": "Maria da Silva",
+  "pesPai": "José da Silva",
+  "cidade": "Várzea Grande",
+  "uf": "MT",
+  "tipoLogradouro": "Avenida",
+  "logradouro": "Dom Bosco",
+  "numero": 1023,
+  "bairro": "Centro",
+  "unidadeId": 2,
+  "dataAdmissao": "2023-01-01",
+  "dataDemissao": "2023-12-31",
+  "fotoBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABVYAAAJ..."
+}
 ```
+
+### 🔹 `PUT /servidores-temporarios/{id}`
+Atualiza um servidor temporário.
+
+### 🔹 `GET /servidores-temporarios/listar`
+Lista os servidores temporários com paginação e filtros.
+
+### 🔹 `GET /servidores-temporarios/{id}`
+Busca um servidor temporário por ID.
+
+### 🔹 `DELETE /servidores-temporarios/{id}`
+Remove um servidor temporário por ID.
+
+> Todos os endpoints podem ser testados diretamente na interface Swagger.
 
 ---
 
@@ -167,7 +149,7 @@ CREATE EXTENSION IF NOT EXISTS unaccent;
 Fotos são armazenadas no MinIO e acessadas por meio de links temporários (válidos por 5 minutos).
 
 - O bucket padrão é `fotos`
-- Os arquivos são enviados via `MinioService`
+- As imagens agora são enviadas em Base64 (campo `fotoBase64`)
 - O hash do arquivo é salvo na tabela `foto_pessoa`
 - A URL é gerada automaticamente no DTO usando o último registro da pessoa
 
@@ -194,6 +176,19 @@ src/main/java
 ## 🔒 Segurança
 
 Autenticação via JWT será implementada com expiração a cada 5 minutos e suporte à renovação de token.
+
+---
+
+## 📚 Documentação Swagger
+
+O projeto já inclui o Swagger OpenAPI 3. Acesse:
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
+Você pode testar todos os endpoints diretamente pela interface web.
+
+> Caso precise customizar título/descrição, edite a configuração da OpenAPI no arquivo `OpenAPIConfig` (caso tenha).
 
 ---
 
