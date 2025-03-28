@@ -1,6 +1,7 @@
 package br.gov.mt.seplag.api.specification;
 
 import br.gov.mt.seplag.api.model.ServidorEfetivo;
+import br.gov.mt.seplag.api.model.ServidorTemporario;
 import net.kaczmarzyk.spring.data.jpa.domain.Like;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
@@ -12,4 +13,9 @@ public class SpecTemplate {
             @Spec(path = "pessoa.pesNome", spec = Like.class)
     })
     public interface ServidorEfetivoSpec extends Specification<ServidorEfetivo> {}
+
+    @And({
+            @Spec(path = "pessoa.pesNome", spec = Like.class)
+    })
+    public interface ServidorTemporarioSpec extends Specification<ServidorTemporario> {}
 }

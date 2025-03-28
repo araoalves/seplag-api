@@ -85,3 +85,6 @@ INSERT INTO cidade (cid_nome, cid_uf) VALUES ('CUIABÁ','MT');
 
 INSERT INTO endereco (end_tipo_logradouro, end_logradouro, end_numero, end_bairro, cid_id) VALUES ('BLOCO','Bloco III - Complexo Paiaguás',3,'Centro Político Administrativo',1);
 INSERT INTO unidade_endereco (unid_id, end_id) VALUES (1,1);
+INSERT INTO unidade_endereco (unid_id, end_id) VALUES (2,1);
+
+CREATE EXTENSION IF NOT EXISTS unaccent;

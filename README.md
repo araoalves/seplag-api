@@ -77,8 +77,6 @@ Cria um novo servidor efetivo com envio de imagem.
 
 **Exemplo no Postman:**
 
-Preencha os campos na aba **Body > form-data**:
-
 ```
 nome: João Silva
 matricula: 123456
@@ -107,14 +105,60 @@ Lista os servidores efetivos com paginação e filtros dinâmicos.
 
 **Exemplo de chamada:**
 ```
-GET /servidores-efetivos/listar?seMatricula=123&page=0&size=10
+GET /servidores-efetivos/listar?pessoa.pesNome=joao&seMatricula=123&page=0&size=10
 ```
 
-Cada item retornado inclui:
+Retorno:
 - Nome
 - Matrícula
-- Idade (calculada a partir da data de nascimento)
-- URL temporária da foto (expira em 5 minutos)
+- Idade
+- Unidade de lotação
+- URL da foto
+
+---
+
+### 🔹 `GET /servidores-efetivos/unidade/{unidId}`
+Consulta todos os servidores efetivos lotados em uma unidade específica.
+
+**Exemplo:**
+```
+GET /servidores-efetivos/unidade/2?page=0&size=10
+```
+
+Retorna os campos:
+- Nome
+- Idade
+- Unidade de lotação
+- Fotografia (URL temporária do MinIO)
+
+---
+
+### 🔹 `GET /servidores-efetivos/endereco-funcional?nome={parteDoNome}`
+Consulta o endereço funcional (endereço da unidade onde o servidor está lotado) com base em parte do nome do servidor efetivo (aceita com ou sem acento).
+
+**Exemplo:**
+```
+GET /servidores-efetivos/endereco-funcional?nome=arão
+```
+
+Retorno:
+```json
+{
+  "nomeServidor": "Arão Alves de Farias",
+  "unidade": "UNIDADE TESTE",
+  "tipoLogradouro": "Rua",
+  "logradouro": "das Flores",
+  "numero": 100,
+  "bairro": "Centro",
+  "cidade": "Cuiabá",
+  "uf": "MT"
+}
+```
+
+> 🔎 Esse endpoint utiliza a função `unaccent` do PostgreSQL, portanto é necessário ativá-la com:
+```sql
+CREATE EXTENSION IF NOT EXISTS unaccent;
+```
 
 ---
 
@@ -134,14 +178,15 @@ Fotos são armazenadas no MinIO e acessadas por meio de links temporários (vál
 ```bash
 src/main/java
 └── br/gov/mt/seplag/api
+    ├── config
     ├── controller
     ├── dto
     ├── form
     ├── mapper
     ├── model
     ├── repository
-    ├── service
-    └── specifications
+    ├── services
+    └── specification
 ```
 
 ---

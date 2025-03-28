@@ -1,10 +1,12 @@
 package br.gov.mt.seplag.api.services;
 
+import br.gov.mt.seplag.api.dto.EnderecoFuncionalDTO;
 import br.gov.mt.seplag.api.dto.ServidorEfetivoDTO;
 import br.gov.mt.seplag.api.form.ServidorEfetivoForm;
 import br.gov.mt.seplag.api.mappers.ServidorEfetivoMapper;
 import br.gov.mt.seplag.api.model.*;
 import br.gov.mt.seplag.api.repository.*;
+import jakarta.persistence.criteria.Expression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,11 +32,15 @@ public class ServidorEfetivoService {
     private final LotacaoRepository lotacaoRepository;
     private final UnidadeRepository unidadeRepository;
     private final PessoaEnderecoRepository pessoaEnderecoRepository;
+    private final UnidadeEnderecoRepository unidadeEnderecoRepository;
     private final MinioService minioService;
     private final ServidorEfetivoMapper mapper;
 
     public Page<ServidorEfetivoDTO> listar(Specification<ServidorEfetivo> spec, Pageable pageable) {
-        return repository.findAll(spec, pageable).map(mapper::toDTO);
+        return repository.findAll(spec, pageable).map(servidor -> {
+            ServidorEfetivoDTO dto = mapper.toDTO(servidor);
+            return adicionarFotoEDatanascimento(dto,servidor);
+        });
     }
 
     public ServidorEfetivoDTO salvar(ServidorEfetivoForm form) {
@@ -92,5 +102,91 @@ public class ServidorEfetivoService {
         dto.setUnidadeLotacao(unidade.getUnidNome());
         return dto;
     }
+
+    public Page<ServidorEfetivoDTO> listarPorUnidade(Long unidId, Pageable pageable) {
+        return lotacaoRepository.findByUnidade(unidId, pageable).map(servidor -> {
+            ServidorEfetivoDTO dto = mapper.toDTO(servidor);
+            return adicionarFotoEDatanascimento(dto, servidor);
+        });
+    }
+
+    public ServidorEfetivoDTO adicionarFotoEDatanascimento(ServidorEfetivoDTO dto, ServidorEfetivo servidor){
+        fotoPessoaRepository.findTopByPessoaOrderByFpDataDesc(servidor.getPessoa())
+                .ifPresent(f -> dto.setUrlFoto(minioService.getUrlTemporaria(f.getFpHash())));
+
+        lotacaoRepository.findTopByPessoaOrderByLotDataLotacaoDesc(servidor.getPessoa())
+                .ifPresent(l -> dto.setUnidadeLotacao(l.getUnidade().getUnidNome()));
+
+        return dto;
+    }
+
+    public Optional<EnderecoFuncionalDTO> buscarEnderecoFuncionalPorNome(String nome) {
+        List<ServidorEfetivo> servidores = repository.findAll((root, query, cb) -> {
+            Expression<String> nomeSemAcento = cb.function("unaccent", String.class, cb.lower(root.get("pessoa").get("pesNome")));
+            return cb.like(nomeSemAcento, "%" + nome.toLowerCase() + "%");
+        });
+
+        return servidores.stream().findFirst().flatMap(servidor -> {
+            Pessoa pessoa = servidor.getPessoa();
+
+            return lotacaoRepository.findTopByPessoaOrderByLotDataLotacaoDesc(pessoa)
+                    .flatMap(lot -> {
+                        Unidade unidade = lot.getUnidade();
+
+                        return unidadeEnderecoRepository.findByUnidade(unidade)
+                                .map(unidEnd -> {
+                                    Endereco end = unidEnd.getEndereco();
+                                    Cidade cidade = end.getCidade();
+
+                                    return new EnderecoFuncionalDTO(
+                                            pessoa.getPesNome(),
+                                            unidade.getUnidNome(),
+                                            end.getEndTipoLogradouro(),
+                                            end.getEndLogradouro(),
+                                            end.getEndNumero(),
+                                            end.getEndBairro(),
+                                            cidade.getCidNome(),
+                                            cidade.getCidUf()
+                                    );
+                                });
+                    });
+        });
+    }
+
+    public Optional<ServidorEfetivoDTO> atualizar(Long id, ServidorEfetivoForm form) {
+        return repository.findById(id).map(servidor -> {
+            Pessoa pessoa = servidor.getPessoa();
+            pessoa.setPesNome(form.getNome());
+            pessoa.setPesDataNascimento(form.getPesDataNascimento());
+            pessoa.setPesSexo(form.getPesSexo());
+            pessoa.setPesMae(form.getPesMae());
+            pessoa.setPesPai(form.getPesPai());
+            pessoaRepository.save(pessoa);
+
+            servidor.setSeMatricula(form.getMatricula());
+            servidor = repository.save(servidor);
+
+            // Foto nova (opcional)
+            if (form.getFoto() != null && !form.getFoto().isEmpty()) {
+                FotoPessoa fotoPessoa = new FotoPessoa();
+                fotoPessoa.setPessoa(pessoa);
+                fotoPessoa.setFpData(LocalDate.now());
+                fotoPessoa.setFpBucket("fotos");
+                fotoPessoa.setFpHash(minioService.uploadFoto(pessoa.getPesId(), form.getFoto()));
+                fotoPessoaRepository.save(fotoPessoa);
+            }
+
+            return mapper.toDTO(servidor);
+        });
+    }
+
+    public boolean deletar(Long id) {
+        return repository.findById(id).map(servidor -> {
+            repository.delete(servidor);
+            return true;
+        }).orElse(false);
+    }
+
+
 
 }
