@@ -1,5 +1,6 @@
 package br.gov.mt.seplag.api.specification;
 
+import br.gov.mt.seplag.api.model.Lotacao;
 import br.gov.mt.seplag.api.model.ServidorEfetivo;
 import br.gov.mt.seplag.api.model.ServidorTemporario;
 import br.gov.mt.seplag.api.model.Unidade;
@@ -24,5 +25,13 @@ public class SpecTemplate {
             @Spec(path = "unidNome", spec = Like.class)
     })
     public interface UnidadeSpec extends Specification<Unidade> {}
+
+    @And({
+            @Spec(path = "pessoa.pesNome", spec = Like.class),
+            @Spec(path = "unidade.unidNome", spec = Like.class),
+            @Spec(path = "lotPortaria", spec = Like.class)
+    })
+    public interface LotacaoSpec extends Specification<Lotacao> {}
+
 
 }
