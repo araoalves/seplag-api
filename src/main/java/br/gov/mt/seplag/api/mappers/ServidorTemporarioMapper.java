@@ -1,6 +1,5 @@
 package br.gov.mt.seplag.api.mappers;
 
-import br.gov.mt.seplag.api.dto.ServidorEfetivoDTO;
 import br.gov.mt.seplag.api.dto.ServidorTemporarioDTO;
 import br.gov.mt.seplag.api.model.ServidorTemporario;
 import org.mapstruct.AfterMapping;
@@ -19,7 +18,7 @@ public interface ServidorTemporarioMapper {
     ServidorTemporarioDTO toDTO(ServidorTemporario servidor);
 
     @AfterMapping
-    default void afterToDTO(ServidorTemporario model, @MappingTarget ServidorEfetivoDTO dto) {
+    default void afterToDTO(ServidorTemporario model, @MappingTarget ServidorTemporarioDTO dto) {
         if (model.getPessoa() != null && model.getPessoa().getPesDataNascimento() != null) {
             int idade = Period.between(model.getPessoa().getPesDataNascimento(), LocalDate.now()).getYears();
             dto.setIdade(idade);

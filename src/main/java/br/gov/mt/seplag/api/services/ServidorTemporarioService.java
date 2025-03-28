@@ -86,6 +86,7 @@ public class ServidorTemporarioService {
                 .ifPresent(f -> dto.setUrlFoto(minioService.getUrlTemporaria(foto.getFpHash())));
         dto.setUnidadeLotacao(unidade.getUnidNome());
         dto.setDataAdmissao(form.getDataAdmissao());
+        dto.setDataDemissao(form.getDataDemissao());
         return dto;
     }
 
@@ -141,6 +142,9 @@ public class ServidorTemporarioService {
 
         lotacaoRepository.findTopByPessoaOrderByLotDataLotacaoDesc(servidor.getPessoa())
                 .ifPresent(l -> dto.setUnidadeLotacao(l.getUnidade().getUnidNome()));
+
+        dto.setDataAdmissao(servidor.getStDataAdmissao());
+        dto.setDataDemissao(servidor.getStDataDemissao());
 
         return dto;
     }
