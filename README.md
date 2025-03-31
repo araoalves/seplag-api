@@ -21,8 +21,8 @@ API RESTful desenvolvida em Java Spring Boot com PostgreSQL, MinIO, JWT e Specif
 
 ### 1. Clonar o repositório
 ```bash
-git clone https://github.com/seu-usuario/nome-do-projeto.git
-cd nome-do-projeto
+git clone https://github.com/araoalves/seplag-api.git
+cd seplag-api
 ```
 
 ### 2. Configurar `.env`
@@ -32,19 +32,19 @@ POSTGRES_DB=servidores_db
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_ADM_EMAIL=admin@admin.com
-POSTGRES_ADM_PASSWORD=admin123
+POSTGRES_ADM_PASSWORD=postgres
 
 MINIO_ROOT_USER=minioadmin
 MINIO_ROOT_PASSWORD=minioadmin
 ```
 
-### 3. Subir containers
+### 3. Subir o projeto completo no docker
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 Acesse:
 - MinIO: http://localhost:9001 (login: `minioadmin` / `minioadmin`)
-- pgAdmin (opcional): http://localhost:16543
+- pgAdmin (opcional): http://localhost:16543  (login: `admin@admin.com` / `postgres`)
 
 ### 4. Rodar o projeto Spring Boot
 Você pode usar sua IDE ou:
@@ -57,6 +57,21 @@ Acesse:
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
+
+---
+
+### 🔧 Executando a aplicação com perfil `dev` no IntelliJ IDEA
+
+Este projeto utiliza perfis do Spring (`dev`, `hmlg`, `prod`, etc). Para rodar a aplicação corretamente no modo local (`dev`), você precisa **ativar o profile `dev` no IntelliJ**.
+
+#### ✅ Passos:
+
+1. Abra a aba **Maven** na lateral direita do IntelliJ.
+2. Em **Profiles**, selecione o checkbox do profile `dev` (como na imagem abaixo).
+3. Agora você pode rodar a aplicação normalmente com esse perfil ativo.
+
+
+> Isso garante que o Spring Boot carregue o arquivo `application-dev.yml` com as configurações corretas para o ambiente de desenvolvimento local.
 
 ---
 
@@ -227,7 +242,7 @@ Remove uma lotação por ID.
 Fotos são armazenadas no MinIO e acessadas por meio de links temporários (válidos por 5 minutos).
 
 - O bucket padrão é `fotos`
-- As imagens agora são enviadas em Base64 (campo `fotoBase64`)
+- As imagens são enviadas em Base64 (campo `fotoBase64`)
 - O hash do arquivo é salvo na tabela `foto_pessoa`
 - A URL é gerada automaticamente no DTO usando o último registro da pessoa
 
@@ -241,8 +256,7 @@ src/main/java
     ├── config
     ├── controller
     ├── dto
-    ├── form
-    ├── mapper
+    ├── mappers
     ├── model
     ├── repository
     ├── security
@@ -267,8 +281,8 @@ Você pode testar todos os endpoints diretamente pela interface web.
 
 Desenvolvido por **Arão Farias**
 
-📧 Email: seu-email@dominio.com
-🔗 GitHub: [github.com/seu-usuario](https://github.com/seu-usuario)
+📧 Email: arao.alves7@gmail.com
+🔗 GitHub: [github.com/araoalves](https://github.com/araoalves)
 
 ---
 
