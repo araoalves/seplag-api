@@ -26,7 +26,7 @@ cd seplag-api
 ```
 
 ### 2. Configurar `.env`
-Crie um arquivo `.env` na raiz com o conteúdo:
+Configure o arquivo `.env` na raiz com o conteúdo:
 ```env
 POSTGRES_DB=servidores_db
 POSTGRES_USER=postgres
