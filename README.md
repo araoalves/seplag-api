@@ -75,6 +75,14 @@ Este projeto utiliza perfis do Spring (`dev`, `hmlg`, `prod`, etc). Para rodar a
 
 ---
 
+### 📬 Importação no Postman
+
+Este projeto já inclui uma **collection do Postman** para facilitar os testes. Basta importar o arquivo `SEPLAG.postman_collection.json` disponível na raiz do projeto.
+
+> A collection contém exemplos prontos para cadastro, login e consumo dos principais endpoints da API.
+
+---
+
 ## 🔐 Autenticação com JWT
 
 - A autenticação é feita via JWT (token expira em 5 minutos)

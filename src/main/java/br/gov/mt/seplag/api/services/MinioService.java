@@ -3,6 +3,7 @@ package br.gov.mt.seplag.api.services;
 import io.minio.*;
 import io.minio.errors.MinioException;
 import io.minio.http.Method;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,24 @@ public class MinioService {
 
     @Value("${minio.bucket}")
     private String bucket;
+
+    /**
+     * Inicializa o bucket no MinIO caso ele ainda não exista.
+     */
+    @PostConstruct
+    public void initBucket() {
+        try {
+            boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
+            if (!found) {
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
+                System.out.println("✅ Bucket criado: " + bucket);
+            } else {
+                System.out.println("✅ Bucket já existe: " + bucket);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("❌ Erro ao verificar/criar bucket no MinIO", e);
+        }
+    }
 
     /**
      * Envia uma foto para o bucket configurado no MinIO
